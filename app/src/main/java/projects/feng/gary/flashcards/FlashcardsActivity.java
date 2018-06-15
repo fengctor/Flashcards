@@ -44,17 +44,17 @@ public class FlashcardsActivity extends AppCompatActivity {
         mCardDisplay = findViewById(R.id.cardDisplay);
         mPosition = 0;
 
-        mCardDisplay.setText(mFlashcardDeck.getFlashcards().get(mPosition).getFacingUp());
+        mCardDisplay.setText(mFlashcardDeck.flashcardAt(mPosition).getFacingUp());
 
         findViewById(R.id.nextButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mPosition == mFlashcardDeck.getFlashcards().size() - 1) {
+                if (mPosition == mFlashcardDeck.numCards() - 1) {
                     return;
                 }
 
                 ++mPosition;
-                mCardDisplay.setText(mFlashcardDeck.getFlashcards().get(mPosition).getFacingUp());
+                mCardDisplay.setText(mFlashcardDeck.flashcardAt(mPosition).getFacingUp());
             }
         });
 
@@ -66,15 +66,15 @@ public class FlashcardsActivity extends AppCompatActivity {
                 }
 
                 --mPosition;
-                mCardDisplay.setText(mFlashcardDeck.getFlashcards().get(mPosition).getFacingUp());
+                mCardDisplay.setText(mFlashcardDeck.flashcardAt(mPosition).getFacingUp());
             }
         });
 
         findViewById(R.id.flipButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mFlashcardDeck.getFlashcards().get(mPosition).switchSide();
-                mCardDisplay.setText(mFlashcardDeck.getFlashcards().get(mPosition).getFacingUp());
+                mFlashcardDeck.flashcardAt(mPosition).switchSide();
+                mCardDisplay.setText(mFlashcardDeck.flashcardAt(mPosition).getFacingUp());
             }
         });
     }
