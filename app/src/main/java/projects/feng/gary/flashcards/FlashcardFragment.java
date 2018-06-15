@@ -1,6 +1,8 @@
 package projects.feng.gary.flashcards;
 
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -8,9 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.List;
+
 public class FlashcardFragment extends Fragment {
     private Flashcard mFlashcard;
     private TextView mFlashcardDisplay;
+    private int mPosition;
+    private FlashcardDeckViewModel mViewModel;
 
     public FlashcardFragment() {
         // Required empty public constructor
@@ -21,10 +27,7 @@ public class FlashcardFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         Bundle args = getArguments();
-        String[] card = args.getStringArray(FlashcardsPagerAdapter.ARG_CARD);
-        int side = args.getInt(FlashcardsPagerAdapter.ARG_SIDE);
-
-        mFlashcard = new Flashcard(card, side);
+        mPosition = args.getInt(FlashcardsPagerAdapter.ARG_POS);
     }
 
     @Override
@@ -37,7 +40,6 @@ public class FlashcardFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         mFlashcardDisplay = view.findViewById(R.id.flashcardDisplay);
-        mFlashcardDisplay.setText(mFlashcard.getFacingUp());
 
         // flip card when it is clicked
         mFlashcardDisplay.setOnClickListener(new View.OnClickListener() {
@@ -48,8 +50,32 @@ public class FlashcardFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        // Set up ViewModel and Observer
+        mViewModel = ViewModelProviders.of(getActivity()).get(FlashcardDeckViewModel.class);
+
+        final Observer<FlashcardDeck> storageListObserver = new Observer<FlashcardDeck>() {
+            @Override
+            public void onChanged(FlashcardDeck flashcardDeck) {
+                // update list items shown
+                mFlashcard = flashcardDeck.flashcardAt(mPosition);
+                updateCardDisplay();
+            }
+        };
+
+        mViewModel.getFlashcardDeck().observe(this, storageListObserver);
+    }
+
     public void flipCard() {
-        mFlashcard.switchSide();
+        FlashcardDeck newDeck = mViewModel.getFlashcardDeck().getValue();
+        newDeck.flashcardAt(mPosition).switchSide();
+        mViewModel.getFlashcardDeck().setValue(newDeck);
+    }
+
+    private void updateCardDisplay() {
         mFlashcardDisplay.setText(mFlashcard.getFacingUp());
     }
 }

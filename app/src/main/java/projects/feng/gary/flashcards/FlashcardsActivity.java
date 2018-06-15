@@ -3,6 +3,7 @@
 
 package projects.feng.gary.flashcards;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -18,9 +19,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class FlashcardsActivity extends AppCompatActivity {
-    FlashcardDeck mFlashcardDeck;
-    TextView mCardDisplay;
     int mPosition;
+    int mNumCards;
 
     ViewPager mPager;
     FlashcardsPagerAdapter mAdapter;
@@ -48,9 +48,8 @@ public class FlashcardsActivity extends AppCompatActivity {
 
         // set up ViewPager
         mPager = findViewById(R.id.viewPager);
-        mAdapter = new FlashcardsPagerAdapter(getSupportFragmentManager(), mFlashcardDeck);
+        mAdapter = new FlashcardsPagerAdapter(getSupportFragmentManager(), mNumCards);
         mPager.setAdapter(mAdapter);
-        mPager.setOffscreenPageLimit(mFlashcardDeck.numCards() - 1);
 
         mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -79,7 +78,13 @@ public class FlashcardsActivity extends AppCompatActivity {
             flashcards.add(new Flashcard(flashcard));
         }
         inputStream.close();
-        mFlashcardDeck = new FlashcardDeck(flashcards);
+
+        FlashcardDeckViewModel viewModel = ViewModelProviders.of(this).get(FlashcardDeckViewModel.class);
+
+        FlashcardDeck flashcardDeck = new FlashcardDeck(flashcards);
+        flashcardDeck.shuffle();
+        mNumCards = flashcardDeck.numCards();
+        viewModel.getFlashcardDeck().setValue(flashcardDeck);
     }
 
 

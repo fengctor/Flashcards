@@ -10,16 +10,14 @@ import android.view.ViewGroup;
 import java.util.HashMap;
 
 public class FlashcardsPagerAdapter extends FragmentPagerAdapter {
-    public static final String ARG_CARD = "card";
-    public static final String ARG_SIDE = "side";
+    public static final String ARG_POS = "pos";
 
-    FlashcardDeck mFlashcardDeck;
-    HashMap<Integer, FlashcardFragment> mCardReferenceMap;
+    private int mNumCards;
+    private HashMap<Integer, FlashcardFragment> mCardReferenceMap;
 
-    public FlashcardsPagerAdapter(FragmentManager fm, FlashcardDeck flashcardDeck) {
+    public FlashcardsPagerAdapter(FragmentManager fm, int numCards) {
         super(fm);
-        mFlashcardDeck = flashcardDeck;
-        mFlashcardDeck.shuffle();
+        mNumCards = numCards;
         mCardReferenceMap = new HashMap<>();
     }
 
@@ -28,9 +26,7 @@ public class FlashcardsPagerAdapter extends FragmentPagerAdapter {
         FlashcardFragment fragment = new FlashcardFragment();
         Bundle args = new Bundle();
 
-        Flashcard flashcard = mFlashcardDeck.flashcardAt(position);
-        args.putStringArray(ARG_CARD, flashcard.getCard());
-        args.putInt(ARG_SIDE, flashcard.getSide());
+        args.putInt(ARG_POS, position);
 
         fragment.setArguments(args);
 
@@ -47,7 +43,7 @@ public class FlashcardsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return mFlashcardDeck.numCards();
+        return mNumCards;
     }
 
     public FlashcardFragment getFragment(int key) {
