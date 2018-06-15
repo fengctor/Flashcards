@@ -19,6 +19,14 @@ public class Flashcard {
         this(card, 0);
     }
 
+    public String[] getCard() {
+        return card;
+    }
+
+    public int getSide() {
+        return side;
+    }
+
     public String getFront() {
         return this.card[0];
     }
@@ -31,6 +39,12 @@ public class Flashcard {
         return this.card[side];
     }
 
+    public void setSide(int side) {
+        if (side != 0 && side != 1) {
+            throw new IllegalArgumentException("Invalid Side");
+        }
+        this.side = side;
+    }
     public void switchSide() {
         side ^= 1;
     }

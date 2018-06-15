@@ -1,6 +1,7 @@
 package projects.feng.gary.flashcards;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class FlashcardDeck {
     private Flashcard[] flashcards;
@@ -21,5 +22,16 @@ public class FlashcardDeck {
         return flashcards.length;
     }
 
-    // TODO: add shuffle method
+    public void shuffle() {
+        Random random = new Random();
+
+        for (int i = 0; i < numCards(); ++i) {
+            int swapIndex = random.nextInt(numCards());
+            Flashcard temp = flashcards[i];
+            flashcards[i] = flashcards[swapIndex];
+            flashcards[swapIndex] = temp;
+
+            flashcards[i].setSide(random.nextInt(500) & 1);
+        }
+    }
 }

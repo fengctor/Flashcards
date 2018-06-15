@@ -13,15 +13,12 @@ import java.io.File;
 public class MainActivity extends AppCompatActivity {
     public static final int READ_REQUEST_CODE = 0;
     public static final String EXTRA_FILE_PATH = "file path";
-    private String mPath;
     private Uri mUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        mPath = null;
 
         // file chooser button
         findViewById(R.id.chooseFileButton).setOnClickListener(new View.OnClickListener() {

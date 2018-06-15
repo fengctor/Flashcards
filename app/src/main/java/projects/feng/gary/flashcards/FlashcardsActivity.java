@@ -5,6 +5,7 @@ package projects.feng.gary.flashcards;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -21,6 +22,9 @@ public class FlashcardsActivity extends AppCompatActivity {
     TextView mCardDisplay;
     int mPosition;
 
+    ViewPager mPager;
+    FlashcardsPagerAdapter mAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,51 +34,36 @@ public class FlashcardsActivity extends AppCompatActivity {
         try {
             fileToFlashcardDeck(getIntent().getData());
         } catch (IOException e) {
-            Log.e("TAG", "no file nibba");
+            Log.e("TAG", "no file lol");
         }
 
-
-        /*TextView front = findViewById(R.id.leftText);
-        TextView back = findViewById(R.id.rightText);
-        for (int i = 0; i < mFlashcardDeck.getFlashcards().size(); ++i) {
-            front.append(mFlashcardDeck.getFlashcards().get(i).getFront() + "\n");
-            back.append(mFlashcardDeck.getFlashcards().get(i).getBack() + "\n");
-        }
-        */
-        mCardDisplay = findViewById(R.id.cardDisplay);
         mPosition = 0;
-
-        mCardDisplay.setText(mFlashcardDeck.flashcardAt(mPosition).getFacingUp());
-
-        findViewById(R.id.nextButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mPosition == mFlashcardDeck.numCards() - 1) {
-                    return;
-                }
-
-                ++mPosition;
-                mCardDisplay.setText(mFlashcardDeck.flashcardAt(mPosition).getFacingUp());
-            }
-        });
-
-        findViewById(R.id.prevButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mPosition == 0) {
-                    return;
-                }
-
-                --mPosition;
-                mCardDisplay.setText(mFlashcardDeck.flashcardAt(mPosition).getFacingUp());
-            }
-        });
 
         findViewById(R.id.flipButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mFlashcardDeck.flashcardAt(mPosition).switchSide();
-                mCardDisplay.setText(mFlashcardDeck.flashcardAt(mPosition).getFacingUp());
+                mAdapter.getFragment(mPosition).flipCard();
+            }
+        });
+
+        // set up ViewPager
+        mPager = findViewById(R.id.viewPager);
+        mAdapter = new FlashcardsPagerAdapter(getSupportFragmentManager(), mFlashcardDeck);
+        mPager.setAdapter(mAdapter);
+        mPager.setOffscreenPageLimit(mFlashcardDeck.numCards() - 1);
+
+        mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                mPosition = position;
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
             }
         });
     }
