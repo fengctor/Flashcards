@@ -8,10 +8,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import java.io.File;
+
 public class MainActivity extends AppCompatActivity {
     public static final int READ_REQUEST_CODE = 0;
     public static final String EXTRA_FILE_PATH = "file path";
     private String mPath;
+    private Uri mUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,17 +67,18 @@ public class MainActivity extends AppCompatActivity {
             // Instead, a URI to that document will be contained in the return intent
             // provided to this method as a parameter.
             // Pull that URI using resultData.getData().
-            Uri uri = null;
             if (resultData != null) {
-                uri = resultData.getData();
-                mPath = uri.getPath();
+                mUri = resultData.getData();
+
+                //File file = new File(uri.getPath());
+                //mPath = file.getAbsolutePath();
             }
         }
     }
 
     private void launchFlashcards() {
         Intent intent = new Intent(this, FlashcardsActivity.class);
-        intent.putExtra(EXTRA_FILE_PATH, mPath);
+        intent.setData(mUri);
         startActivity(intent);
     }
 }
